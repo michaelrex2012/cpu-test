@@ -29,7 +29,7 @@ int main() {
         auto end = chrono::high_resolution_clock::now();
         totalTime = chrono::duration_cast<chrono::seconds>(end - start).count();
         if (floor(totalTime) == totalTime && totalTime != before) {
-            cout << "[" << chrono::system_clock::now() << "] " << BOLDBACKGREEN << "PROGRESS" << RESET << " " << totalTime << "/" << runTime << " s" << endl;
+            cout << "[" << chrono::system_clock::now() << "] " << BOLD_BACK_GREEN << "PROGRESS" << RESET << " " << totalTime << "/" << runTime << " s" << endl;
             before = totalTime;
         }
     }
