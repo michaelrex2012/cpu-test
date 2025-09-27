@@ -4,7 +4,8 @@
 #include <chrono>
 #include <cmath>
 #include <windows.h>
-#include <stdio.h>
+#include <cstdio>
+#include "color.h"
 
 using namespace std;
 
@@ -27,14 +28,14 @@ int main() {
         i++;
         auto end = chrono::high_resolution_clock::now();
         totalTime = chrono::duration_cast<chrono::seconds>(end - start).count();
-        if (floor(totalTime) == totalTime && totalTime != before){
-            cout << "[" << chrono::system_clock::now() << "] " << totalTime << "/" << runTime << endl;
+        if (floor(totalTime) == totalTime && totalTime != before) {
+            cout << "[" << chrono::system_clock::now() << "] " << BOLDBACKGREEN << "PROGRESS" << RESET << " " << totalTime << "/" << runTime << " s" << endl;
             before = totalTime;
         }
     }
 
-    cout << endl << "Your score by lines printed per second is: " << endl << (i / runTime) / 1000 <<
-            " ln/ms" << endl << endl;
+    cout << endl << RESET << "Your score by lines printed per second is: " << endl << (i / runTime) / 1000 <<
+            "ln/ms" << endl << endl;
     system("pause");
 
     return 0;
