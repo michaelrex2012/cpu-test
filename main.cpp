@@ -34,8 +34,7 @@ int main() {
         }
     }
 
-    cout << endl << RESET << "Your score by lines printed per second is: " << endl << (i / runTime) / 1000 <<
-            "ln/ms" << endl << endl;
+    cout << "[" << chrono::system_clock::now() << "] " << BOLD_BACK_MAGENTA << "RESULT" << RESET << " " << (i/runTime)/100 << " ln/" << "ms" << endl << endl;
     system("pause");
 
     return 0;
