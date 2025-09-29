@@ -41,7 +41,7 @@ int main() {
 
     cout << "[" << chrono::high_resolution_clock::now() << "] "
          << BOLD_BACK_MAGENTA << "RESULT" << RESET << " "
-         << (i / runTime) / 100 << " ln/ms" << endl << endl;
+         << (i / runTime) / 1000 << " ln/ms" << endl << endl;
 
     system("pause");
     return 0;
