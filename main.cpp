@@ -29,28 +29,28 @@ int main() {
     int counter = 0;
 
 
-    cout << "[" << chrono::high_resolution_clock::now() << "] "
+    cout << "[" << chrono::system_clock::now() << "] "
                  << BACK_YELLOW << "INFO" << RESET << " " <<"Page Size: " << sysInfo.dwPageSize << " B" << endl;
-    cout << "[" << chrono::high_resolution_clock::now() << "] "
+    cout << "[" << chrono::system_clock::now() << "] "
                  << BACK_YELLOW << "INFO" << RESET << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
 
-    const auto start = chrono::high_resolution_clock::now();
+    const auto start = chrono::system_clock::now();
 
     while (totalTime < runTime) {
         i++;
-        auto end = chrono::high_resolution_clock::now();
+        auto end = chrono::system_clock::now();
         totalTime = chrono::duration_cast<chrono::seconds>(end - start).count();
 
         if (totalTime != beforeTime)
         {
-            cout << "[" << chrono::high_resolution_clock::now() << "] "
+            cout << "[" << chrono::system_clock::now() << "] "
                  << BOLD_BACK_GREEN << "PROGRESS" << RESET << " " << totalTime << "/" << runTime << " s" << endl;
             beforeTime = totalTime;
             counter++;
         }
     }
 
-    cout << "[" << chrono::high_resolution_clock::now() << "] "
+    cout << "[" << chrono::system_clock::now() << "] "
          << BOLD_BACK_MAGENTA << "RESULT" << RESET << " "
          << (i / runTime) / 1000 << " ln/ms" << endl << endl;
 
