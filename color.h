@@ -1,6 +1,5 @@
-//
-// Created by Micha on 9/26/2025.
-//
+// Created by Michael on 9/26/2025.
+// ANSI terminal colors
 
 #ifndef CPU_TEST_COLOR_H
 #define CPU_TEST_COLOR_H
