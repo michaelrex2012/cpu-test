@@ -15,7 +15,7 @@ int main() {
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
 
-    ofstream newLogFile("output.log");
+    ofstream logFile("output.log");
 
     cout << "This program will test your single thread speed!" << endl;
     cout << "Enter the amount of seconds you want the test to run: ";
@@ -31,8 +31,12 @@ int main() {
 
     cout << "[" << chrono::system_clock::now() << "] "
                  << BACK_YELLOW << "INFO" << RESET << " " <<"Page Size: " << sysInfo.dwPageSize << " B" << endl;
+    logFile << "[" << chrono::system_clock::now() << "] "
+                 << "INFO" << " " <<"Page Size: " << sysInfo.dwPageSize << " B" << endl;
     cout << "[" << chrono::system_clock::now() << "] "
                  << BACK_YELLOW << "INFO" << RESET << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
+    logFile << "[" << chrono::system_clock::now() << "] "
+                 << "INFO" << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
 
     const auto start = chrono::system_clock::now();
 
@@ -45,6 +49,8 @@ int main() {
         {
             cout << "[" << chrono::system_clock::now() << "] "
                  << BOLD_BACK_GREEN << "PROGRESS" << RESET << " " << totalTime << "/" << runTime << " s" << endl;
+            logFile << "[" << chrono::system_clock::now() << "] "
+                 << "PROGRESS" << " " << totalTime << "/" << runTime << " s" << endl;
             beforeTime = totalTime;
             counter++;
         }
@@ -53,6 +59,9 @@ int main() {
     cout << "[" << chrono::system_clock::now() << "] "
          << BOLD_BACK_MAGENTA << "RESULT" << RESET << " "
          << (i / runTime) / 1000 << " ln/ms" << endl << endl;
+    logFile << "[" << chrono::system_clock::now() << "] "
+         << "RESULT" << " "
+         << (i / runTime) / 1000 << " ln/ms";
 
     system("pause");
     return 0;
