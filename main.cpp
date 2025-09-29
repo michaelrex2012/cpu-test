@@ -1,4 +1,3 @@
-#define WIN32_DCOM
 #include <iostream>
 #include <thread>
 #include <string>
@@ -8,10 +7,20 @@
 #include <cstdio>
 #include "color.h"
 #include "TCHAR.h"
+#include <fstream>
 
 using namespace std;
 
 int main() {
+    string startTime;
+    startTime.(chrono::high_resolution_clock::now());
+
+    SYSTEM_INFO sysInfo;
+    GetSystemInfo(&sysInfo);
+
+    ofstream newLogFile("new.log");
+    ofstream logFile(startTime + "_output.log");
+
     cout << "This program will test your single thread speed!" << endl;
     cout << "Enter the amount of seconds you want the test to run: ";
     int runTime;
@@ -22,6 +31,12 @@ int main() {
     int totalTime = 0;
     int beforeTime = -1;
     int counter = 0;
+
+
+    cout << "[" << chrono::high_resolution_clock::now() << "] "
+                 << BACK_YELLOW << "INFO" << RESET << " " <<"Page Size: " << sysInfo.dwPageSize << " B" << endl;
+    cout << "[" << chrono::high_resolution_clock::now() << "] "
+                 << BACK_YELLOW << "INFO" << RESET << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
 
     const auto start = chrono::high_resolution_clock::now();
 
