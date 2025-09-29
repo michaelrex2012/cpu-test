@@ -12,14 +12,10 @@
 using namespace std;
 
 int main() {
-    string startTime;
-    startTime.(chrono::high_resolution_clock::now());
-
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
 
-    ofstream newLogFile("new.log");
-    ofstream logFile(startTime + "_output.log");
+    ofstream newLogFile("output.log");
 
     cout << "This program will test your single thread speed!" << endl;
     cout << "Enter the amount of seconds you want the test to run: ";
