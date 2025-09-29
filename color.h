@@ -1,5 +1,5 @@
 // Created by Michael on 9/26/2025.
-// ANSI terminal colors
+// ANSI terminal foreground and background colors with or without bold style
 
 #ifndef CPU_TEST_COLOR_H
 #define CPU_TEST_COLOR_H
