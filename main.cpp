@@ -1,4 +1,3 @@
-#define WIN32_DCOM
 #include <iostream>
 #include <thread>
 #include <string>
@@ -7,166 +6,130 @@
 #include <windows.h>
 #include <cstdio>
 #include "color.h"
-#include "TCHAR.h"
-#include <Wbemidl.h>
-
-#pragma comment(lib, "wbemuuid.lib")
+#include <fstream>
 
 using namespace std;
 
-HRESULT GetCpuTemperature(double& temperatureCelsius)
-{
-    temperatureCelsius = -1.0;
+int main(int argc, char* argv[]) {
+    SYSTEM_INFO sysInfo;
+    GetSystemInfo(&sysInfo);
 
-    HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-    if (FAILED(hr))
-        return hr;
+    int runTime = 60;
+    int priority = 3;
+    string versionNum = "v0.1 Beta";
+    string mode = "run";
 
-    hr = CoInitializeSecurity(
-        nullptr, -1, nullptr, nullptr,
-        RPC_C_AUTHN_LEVEL_DEFAULT,
-        RPC_C_IMP_LEVEL_IMPERSONATE,
-        nullptr, EOAC_NONE, nullptr);
-    if (FAILED(hr))
-    {
-        CoUninitialize();
-        return hr;
+    for (int i = 1; i < argc; i++) {
+        string arg = argv[i];
+
+        if (arg == "-p" || arg == "--cpu-priority" && i + 1 < argc) {
+            priority = stoi(argv[++i]);
+        }
+        if (arg == "-t" || arg == "--time" && i + 1 < argc) {
+            runTime = stoi(argv[++i]);
+        }
+        if (arg == "-h" || arg == "--help") {
+            mode = "help";
+        }
+        if (arg == "-v" || arg == "--version") {
+            mode = "version";
+        }
+        if (arg == "-i" || arg == "--info") {
+            mode = "info";
+        }
     }
 
-    IWbemLocator* pLocator = nullptr;
-    hr = CoCreateInstance(
-        CLSID_WbemLocator,
-        nullptr,
-        CLSCTX_INPROC_SERVER,
-        IID_IWbemLocator,
-        (LPVOID*)&pLocator);
-    if (FAILED(hr))
-    {
-        CoUninitialize();
-        return hr;
+    if (priority == 1) {
+        SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);
+    }
+    if (priority == 2) {
+        SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS);
+    }
+    if (priority == 3) {
+        SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
+    }
+    if (priority == 4) {
+        SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
+    }
+    if (priority == 5) {
+        SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
     }
 
-    IWbemServices* pServices = nullptr;
-    BSTR namespaceName = SysAllocString(L"root\\CIMV2");
-    hr = pLocator->ConnectServer(
-        namespaceName,
-        nullptr,
-        nullptr,
-        nullptr,
-        0,
-        nullptr,
-        nullptr,
-        &pServices);
-    SysFreeString(namespaceName);
-    pLocator->Release();
-
-    if (FAILED(hr))
-    {
-        CoUninitialize();
-        return hr;
+    if (priority < 1 || priority > 5) {
+        priority = 3;
     }
 
-    hr = CoSetProxyBlanket(
-        pServices,
-        RPC_C_AUTHN_WINNT,
-        RPC_C_AUTHZ_NONE,
-        nullptr,
-        RPC_C_AUTHN_LEVEL_CALL,
-        RPC_C_IMP_LEVEL_IMPERSONATE,
-        nullptr,
-        EOAC_NONE);
-
-    if (FAILED(hr))
-    {
-        pServices->Release();
-        CoUninitialize();
-        return hr;
+    if (mode == "version") {
+        cout << versionNum;
     }
 
-    BSTR query = SysAllocString(L"SELECT * FROM Win32_PerfFormattedData_Counters_ThermalZoneInformation");
-    BSTR wql = SysAllocString(L"WQL");
+    if (mode == "info") {
+        ofstream infoFile("info.log");
 
-    IEnumWbemClassObject* pEnumerator = nullptr;
-    hr = pServices->ExecQuery(
-        wql,
-        query,
-        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
-        nullptr,
-        &pEnumerator);
-
-    SysFreeString(query);
-    SysFreeString(wql);
-
-    if (FAILED(hr))
-    {
-        pServices->Release();
-        CoUninitialize();
-        return hr;
+        cout << "[" << chrono::system_clock::now() << "] "
+                     << BACK_YELLOW << "INFO" << RESET << " " <<"Page Size: " << sysInfo.dwPageSize << " B" << endl;
+        infoFile << "[" << chrono::system_clock::now() << "] "
+                     << "INFO" << " " <<"Page Size: " << sysInfo.dwPageSize << " B" << endl;
+        cout << "[" << chrono::system_clock::now() << "] "
+                     << BACK_YELLOW << "INFO" << RESET << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
+        infoFile << "[" << chrono::system_clock::now() << "] "
+                     << "INFO" << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors;
     }
 
-    IWbemClassObject* pClassObject = nullptr;
-    ULONG returnedCount = 0;
+    if (mode == "help") {
+        cout << "-h --help: Displays this help and exits" << endl;
+        cout << "-v --version: Displays this program's version number and exits" << endl;
+        cout << "-p --cpu-priority: Set run priority (Default unset, 1 is low, 3 is normal, and 5 is realtime)" << endl;
+        cout << "-i --info: Displays machine info and exits" << endl;
+        cout << "-t --time: Set time to run" << endl;
+    }
 
-    while (pEnumerator && pEnumerator->Next(WBEM_INFINITE, 1, &pClassObject, &returnedCount) == S_OK)
-    {
-        VARIANT vtTemp;
-        VariantInit(&vtTemp);
+    if (mode == "run") {
+        ofstream logFile("output.log");
 
-        hr = pClassObject->Get(L"Temperature", 0, &vtTemp, nullptr, nullptr);
-        if (SUCCEEDED(hr) && (vtTemp.vt == VT_I4))
-        {
-            long rawTemp = vtTemp.lVal;
-            if (rawTemp > 0)
+        int counter = 0;
+        int beforeTime = -1;
+        int iterations = 0;
+        int totalTime = 0;
+        cout << "[" << chrono::system_clock::now() << "] "
+                     << BACK_YELLOW << "INFO" << RESET << " " <<"Page Size: " << sysInfo.dwPageSize << " B" << endl;
+        logFile << "[" << chrono::system_clock::now() << "] "
+                     << "INFO" << " " <<"Page Size: " << sysInfo.dwPageSize << " B" << endl;
+        cout << "[" << chrono::system_clock::now() << "] "
+                     << BACK_YELLOW << "INFO" << RESET << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
+        logFile << "[" << chrono::system_clock::now() << "] "
+                     << "INFO" << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
+        cout << "[" << chrono::system_clock::now() << "] "
+                     << BACK_YELLOW << "INFO" << RESET << " " << "Priority of this test: " << priority << endl;
+        logFile << "[" << chrono::system_clock::now() << "] "
+                     << "INFO" << " " << "Priority of this test: " << priority << endl;
+
+        const auto start = chrono::system_clock::now();
+
+        while (totalTime < runTime) {
+            iterations++;
+            auto end = chrono::system_clock::now();
+            totalTime = chrono::duration_cast<chrono::seconds>(end - start).count();
+
+            if (totalTime != beforeTime)
             {
-                temperatureCelsius = (static_cast<double>(rawTemp) / 10.0) - 273.15;
-                VariantClear(&vtTemp);
-                pClassObject->Release();
-                break;
+                cout << "[" << chrono::system_clock::now() << "] "
+                     << BOLD_BACK_GREEN << "PROGRESS" << RESET << " " << totalTime << "/" << runTime << " s" << endl;
+                logFile << "[" << chrono::system_clock::now() << "] "
+                     << "PROGRESS" << " " << totalTime << "/" << runTime << " s" << endl;
+                beforeTime = totalTime;
+                counter++;
             }
         }
-        VariantClear(&vtTemp);
-        pClassObject->Release();
+
+        cout << "[" << chrono::system_clock::now() << "] "
+             << BOLD_BACK_MAGENTA << "RESULT" << RESET << " "
+             << (iterations / runTime) / 1000 << " ln/ms" << endl << endl;
+        logFile << "[" << chrono::system_clock::now() << "] "
+             << "RESULT" << " "
+             << (iterations / runTime) / 1000 << " ln/ms";
+
+        system("pause");
     }
-
-    if (pEnumerator) pEnumerator->Release();
-    pServices->Release();
-    CoUninitialize();
-
-    return hr;
-}
-
-int main() {
-    cout << "This program will test your single thread speed!" << endl;
-    cout << "Enter the amount of seconds you want the test to run: ";
-    int runTime;
-    cin >> runTime;
-    cout << endl;
-
-    int i = 0;
-    int totalTime = 0;
-    int beforeTime = -1;
-    int counter = 0;
-
-    const auto start = chrono::high_resolution_clock::now();
-
-    while (totalTime < runTime) {
-        i++;
-        auto end = chrono::high_resolution_clock::now();
-        totalTime = chrono::duration_cast<chrono::seconds>(end - start).count();
-
-        if (totalTime != beforeTime)
-        {
-            cout << "[" << chrono::high_resolution_clock::now() << "] "
-                 << BOLD_BACK_GREEN << "PROGRESS" << RESET << " " << totalTime << "/" << runTime << " s" << endl;
-            beforeTime = totalTime;
-            counter++;
-        }
-    }
-
-    cout << "[" << chrono::high_resolution_clock::now() << "] "
-         << BOLD_BACK_MAGENTA << "RESULT" << RESET << " "
-         << (i / runTime) / 100 << " ln/ms" << endl << endl;
-
-    system("pause");
     return 0;
 }
