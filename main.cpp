@@ -6,27 +6,33 @@
 #include <windows.h>
 #include <cstdio>
 #include "color.h"
-#include "TCHAR.h"
 #include <fstream>
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
 
     ofstream logFile("output.log");
 
-    cout << "This program will test your single thread speed!" << endl;
-    cout << "Enter the amount of seconds you want the test to run: ";
-    int runTime;
-    cin >> runTime;
-    cout << endl;
-
-    int i = 0;
+    int runTime = 60;
+    int iterations = 0;
     int totalTime = 0;
     int beforeTime = -1;
     int counter = 0;
+    int priority = 3;
+
+    for (int i = 1; i < argc; i++) {
+        string arg = argv[i];
+
+        if (arg == "-p" || arg == "--cpu-priority" && i + 1 < argc) {
+            priority = stoi(argv[++i]);
+        }
+        if (arg == "-t" || arg == "--time" && i + 1 < argc) {
+            runTime = stoi(argv[++i]);
+        }
+    }
 
 
     cout << "[" << chrono::system_clock::now() << "] "
@@ -41,7 +47,7 @@ int main() {
     const auto start = chrono::system_clock::now();
 
     while (totalTime < runTime) {
-        i++;
+        iterations++;
         auto end = chrono::system_clock::now();
         totalTime = chrono::duration_cast<chrono::seconds>(end - start).count();
 
@@ -58,10 +64,10 @@ int main() {
 
     cout << "[" << chrono::system_clock::now() << "] "
          << BOLD_BACK_MAGENTA << "RESULT" << RESET << " "
-         << (i / runTime) / 1000 << " ln/ms" << endl << endl;
+         << (iterations / runTime) / 1000 << " ln/ms" << endl << endl;
     logFile << "[" << chrono::system_clock::now() << "] "
          << "RESULT" << " "
-         << (i / runTime) / 1000 << " ln/ms";
+         << (iterations / runTime) / 1000 << " ln/ms";
 
     system("pause");
     return 0;
