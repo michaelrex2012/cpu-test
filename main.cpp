@@ -12,14 +12,10 @@
 using namespace std;
 
 int main() {
-    string startTime;
-    startTime.(chrono::high_resolution_clock::now());
-
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
 
-    ofstream newLogFile("new.log");
-    ofstream logFile(startTime + "_output.log");
+    ofstream logFile("output.log");
 
     cout << "This program will test your single thread speed!" << endl;
     cout << "Enter the amount of seconds you want the test to run: ";
@@ -33,30 +29,39 @@ int main() {
     int counter = 0;
 
 
-    cout << "[" << chrono::high_resolution_clock::now() << "] "
+    cout << "[" << chrono::system_clock::now() << "] "
                  << BACK_YELLOW << "INFO" << RESET << " " <<"Page Size: " << sysInfo.dwPageSize << " B" << endl;
-    cout << "[" << chrono::high_resolution_clock::now() << "] "
+    logFile << "[" << chrono::system_clock::now() << "] "
+                 << "INFO" << " " <<"Page Size: " << sysInfo.dwPageSize << " B" << endl;
+    cout << "[" << chrono::system_clock::now() << "] "
                  << BACK_YELLOW << "INFO" << RESET << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
+    logFile << "[" << chrono::system_clock::now() << "] "
+                 << "INFO" << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
 
-    const auto start = chrono::high_resolution_clock::now();
+    const auto start = chrono::system_clock::now();
 
     while (totalTime < runTime) {
         i++;
-        auto end = chrono::high_resolution_clock::now();
+        auto end = chrono::system_clock::now();
         totalTime = chrono::duration_cast<chrono::seconds>(end - start).count();
 
         if (totalTime != beforeTime)
         {
-            cout << "[" << chrono::high_resolution_clock::now() << "] "
+            cout << "[" << chrono::system_clock::now() << "] "
                  << BOLD_BACK_GREEN << "PROGRESS" << RESET << " " << totalTime << "/" << runTime << " s" << endl;
+            logFile << "[" << chrono::system_clock::now() << "] "
+                 << "PROGRESS" << " " << totalTime << "/" << runTime << " s" << endl;
             beforeTime = totalTime;
             counter++;
         }
     }
 
-    cout << "[" << chrono::high_resolution_clock::now() << "] "
+    cout << "[" << chrono::system_clock::now() << "] "
          << BOLD_BACK_MAGENTA << "RESULT" << RESET << " "
          << (i / runTime) / 1000 << " ln/ms" << endl << endl;
+    logFile << "[" << chrono::system_clock::now() << "] "
+         << "RESULT" << " "
+         << (i / runTime) / 1000 << " ln/ms";
 
     system("pause");
     return 0;
