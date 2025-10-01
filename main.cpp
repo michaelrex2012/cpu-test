@@ -7,12 +7,15 @@
 #include <cstdio>
 #include "color.h"
 #include <fstream>
+#include <intrin.h>
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
+    int cpuInfo[4] = { -1 };
+    char cpuBrandString[0x40] = { 0 };
 
     int runTime = 60;
     int priority = 3;
@@ -87,7 +90,22 @@ int main(int argc, char* argv[]) {
         cout << "[" << chrono::system_clock::now() << "] "
                      << BACK_YELLOW << "INFO" << RESET << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
         infoFile << "[" << chrono::system_clock::now() << "] "
-                     << "INFO" << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors;
+                     << "INFO" << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
+
+        __cpuid(cpuInfo, 0x80000000);
+        if (cpuInfo[0] >= 0x80000004) {
+            __cpuid((int*)cpuInfo, 0x80000002);
+            memcpy(cpuBrandString, cpuInfo, sizeof(cpuInfo));
+
+            __cpuid((int*)cpuInfo, 0x80000003);
+            memcpy(cpuBrandString + 16, cpuInfo, sizeof(cpuInfo));
+
+            __cpuid((int*)cpuInfo, 0x80000004);
+            memcpy(cpuBrandString + 32, cpuInfo, sizeof(cpuInfo));
+
+            cout  << "[" << chrono::system_clock::now() << "] " << BACK_YELLOW << "INFO" << RESET << " CPU: " << cpuBrandString << endl;
+            infoFile  << "[" << chrono::system_clock::now() << "] " << "INFO" << " CPU: " << cpuBrandString;
+        }
     }
 
     if (mode == "help") {
@@ -121,7 +139,20 @@ int main(int argc, char* argv[]) {
                      << BACK_YELLOW << "INFO" << RESET << " " << "Priority of this test: " << priority << endl;
         logFile << "[" << chrono::system_clock::now() << "] "
                      << "INFO" << " " << "Priority of this test: " << priority << endl;
+        __cpuid(cpuInfo, 0x80000000);
+        if (cpuInfo[0] >= 0x80000004) {
+            __cpuid((int*)cpuInfo, 0x80000002);
+            memcpy(cpuBrandString, cpuInfo, sizeof(cpuInfo));
 
+            __cpuid((int*)cpuInfo, 0x80000003);
+            memcpy(cpuBrandString + 16, cpuInfo, sizeof(cpuInfo));
+
+            __cpuid((int*)cpuInfo, 0x80000004);
+            memcpy(cpuBrandString + 32, cpuInfo, sizeof(cpuInfo));
+
+            cout  << "[" << chrono::system_clock::now() << "] " << BACK_YELLOW << "INFO" << RESET << " CPU: " << cpuBrandString << endl;
+            logFile  << "[" << chrono::system_clock::now() << "] " << "INFO" << " CPU: " << cpuBrandString << endl;
+        }
         const auto start = chrono::system_clock::now();
 
         while (totalTime < runTime) {
@@ -171,7 +202,20 @@ int main(int argc, char* argv[]) {
                      << "INFO" << " " << "Priority of this test: " << priority << endl;
         logFile << "[" << chrono::system_clock::now() << "] "
                      << "INFO" << " " << "Priority of this test: " << priority << endl;
+        __cpuid(cpuInfo, 0x80000000);
+        if (cpuInfo[0] >= 0x80000004) {
+            __cpuid((int*)cpuInfo, 0x80000002);
+            memcpy(cpuBrandString, cpuInfo, sizeof(cpuInfo));
 
+            __cpuid((int*)cpuInfo, 0x80000003);
+            memcpy(cpuBrandString + 16, cpuInfo, sizeof(cpuInfo));
+
+            __cpuid((int*)cpuInfo, 0x80000004);
+            memcpy(cpuBrandString + 32, cpuInfo, sizeof(cpuInfo));
+
+            cout  << "[" << chrono::system_clock::now() << "] " << "INFO" << " CPU: " << cpuBrandString << endl;
+            logFile  << "[" << chrono::system_clock::now() << "] " << "INFO" << " CPU: " << cpuBrandString << endl;
+        }
         const auto start = chrono::system_clock::now();
 
         while (totalTime < runTime) {
@@ -216,6 +260,19 @@ int main(int argc, char* argv[]) {
                      << "INFO" << " " << "Number of Cores: " << sysInfo.dwNumberOfProcessors << endl;
         logFile << "[" << chrono::system_clock::now() << "] "
                      << "INFO" << " " << "Priority of this test: " << priority << endl;
+        __cpuid(cpuInfo, 0x80000000);
+        if (cpuInfo[0] >= 0x80000004) {
+            __cpuid((int*)cpuInfo, 0x80000002);
+            memcpy(cpuBrandString, cpuInfo, sizeof(cpuInfo));
+
+            __cpuid((int*)cpuInfo, 0x80000003);
+            memcpy(cpuBrandString + 16, cpuInfo, sizeof(cpuInfo));
+
+            __cpuid((int*)cpuInfo, 0x80000004);
+            memcpy(cpuBrandString + 32, cpuInfo, sizeof(cpuInfo));
+
+            logFile  << "[" << chrono::system_clock::now() << "] " << "INFO" << " CPU: " << cpuBrandString << endl;
+        }
 
         const auto start = chrono::system_clock::now();
 
