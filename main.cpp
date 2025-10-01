@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
         if (arg == "--no-ansi") {
             mode = "no-ansi";
         }
-        if (arg == "-s" || "--silent") {
+        if (arg == "-s" || arg == "--silent") {
             mode = "silent";
         }
         if (arg == "--no-pause") {
