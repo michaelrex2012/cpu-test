@@ -173,10 +173,10 @@ int main(int argc, char* argv[]) {
 
         cout << "[" << chrono::system_clock::now() << "] "
              << BOLD_BACK_MAGENTA << "RESULT" << RESET << " "
-             << (iterations / runTime) / 1000 << " ln/ms" << endl << endl;
+             << (iterations / runTime) / 1000 << " iterations/ms" << endl << endl;
         logFile << "[" << chrono::system_clock::now() << "] "
              << "RESULT" << " "
-             << (iterations / runTime) / 1000 << " ln/ms";
+             << (iterations / runTime) / 1000 << " iterations/ms";
 
         if (pause) {
             system("pause");
@@ -236,10 +236,10 @@ int main(int argc, char* argv[]) {
 
         cout << "[" << chrono::system_clock::now() << "] "
              << "RESULT" << " "
-             << (iterations / runTime) / 1000 << " ln/ms" << endl << endl;
+             << (iterations / runTime) / 1000 << " iterations/ms" << endl << endl;
         logFile << "[" << chrono::system_clock::now() << "] "
              << "RESULT" << " "
-             << (iterations / runTime) / 1000 << " ln/ms";
+             << (iterations / runTime) / 1000 << " iterations/ms";
 
         if (pause) {
             system("pause");
@@ -292,7 +292,7 @@ int main(int argc, char* argv[]) {
 
         logFile << "[" << chrono::system_clock::now() << "] "
              << "RESULT" << " "
-             << (iterations / runTime) / 1000 << " ln/ms";
+             << (iterations / runTime) / 1000 << " iterations/ms";
 
         if (pause) {
             system("pause");
