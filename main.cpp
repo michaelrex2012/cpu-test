@@ -8,6 +8,7 @@
 #include "color.h"
 #include <fstream>
 #include <intrin.h>
+#include "constants.h"
 
 using namespace std;
 
@@ -19,7 +20,6 @@ int main(int argc, char* argv[]) {
 
     int runTime = 60;
     int priority = 3;
-    string versionNum = "v0.1 Beta";
     string mode = "run";
     string outputPath = "output.log";
     bool pause = true;
@@ -77,7 +77,8 @@ int main(int argc, char* argv[]) {
     }
 
     if (mode == "version") {
-        cout << versionNum;
+        cout << VERSION << endl;
+        cout << "By " << AUTHOR;
     }
 
     if (mode == "info") {
